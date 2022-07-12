@@ -8,79 +8,65 @@ public class ListSorter {
 
     }
 
-    public static List<int> Sort(List<int> listToSort) {
-        if (listToSort.Count < 2) {
-            return listToSort;
+    public static void Sort(List<int> listToSort, int firstIndex, 
+                                 int lastIndex)
+    {
+        int mid;
+        if (firstIndex < lastIndex) {
+            mid = (firstIndex + lastIndex) / 2;
+            Sort(listToSort, firstIndex, mid);
+            Sort(listToSort, mid + 1, lastIndex);
+            Merge(listToSort, firstIndex, mid + 1, lastIndex);
         }
-
-        int halfLength = listToSort.Count / 2;
-        List<int> firstHalf = listToSort.GetRange(0, halfLength);
-        List<int> secondHalf = listToSort.GetRange(
-            halfLength, listToSort.Count - halfLength
-        );
-        firstHalf = Sort(firstHalf);
-        secondHalf = Sort(secondHalf);
-
-        return Merge(firstHalf, secondHalf);
     }
 
-    private static List<int> Merge(List<int> firstSliceToMerge, 
-                                   List<int> secondSliceToMerge) 
+    private static void Merge(List<int> listToMerge, int leftIndex, 
+                                   int rightIndex, int lastIndex) 
     {
-        int finalListLength = firstSliceToMerge.Count + secondSliceToMerge.Count;
-        List<int> finalList = new List<int>(finalListLength);
+        int currentLeftItem;
+        int currentRightItem;
+        int currentTemporaryItem;
 
-        int firstSliceCounter = 0;
-        int secondSliceCounter = 0;
-        int finalListCounter = 0;
+        int temporaryListLength = listToMerge.Count;
+        List<int> temporaryList = new List<int>(temporaryListLength);
 
-        int currentLeftItem = 0;
-        int currentRightItem = 0;
+        int endOfLeftSplit = rightIndex - 1;
+        int finalLength = lastIndex - leftIndex + 1;
 
-        // Merge slices
-        while (
-            firstSliceCounter < firstSliceToMerge.Count &&
-            secondSliceCounter < secondSliceToMerge.Count)
-        {
-            currentLeftItem = firstSliceToMerge[firstSliceCounter];
-            currentRightItem = secondSliceToMerge[secondSliceCounter];
+        while(leftIndex <= endOfLeftSplit && rightIndex <= lastIndex) {
+            currentLeftItem = listToMerge[leftIndex];
+            currentRightItem = listToMerge[rightIndex];
 
             if (currentLeftItem < currentRightItem) {
-                finalList.Insert(
-                    finalListCounter++, 
-                    currentLeftItem
-                );
+                temporaryList.Add(currentLeftItem);
 
-                firstSliceCounter++;
-
+                leftIndex++;
             } else {
-                finalList.Insert(
-                    finalListCounter++,
-                    currentRightItem
-                );
+                temporaryList.Add(currentRightItem);
 
-                secondSliceCounter++;
-            }
-
-            while (firstSliceCounter < firstSliceToMerge.Count) {
-                currentLeftItem = firstSliceToMerge[firstSliceCounter];
-
-                finalList.Insert(
-                    finalListCounter++, 
-                    currentLeftItem
-                );
-            }
-
-            while (secondSliceCounter < secondSliceToMerge.Count) {
-                currentRightItem = secondSliceToMerge[secondSliceCounter];
-
-                finalList.Insert(
-                    finalListCounter++,
-                    currentRightItem
-                );
+                rightIndex++;
             }
         }
 
-        return finalList;
+        while (leftIndex <= endOfLeftSplit) {
+            currentLeftItem = listToMerge[leftIndex];
+            temporaryList.Add(currentLeftItem);
+
+            leftIndex++;
+        }
+
+        while (rightIndex <= lastIndex) {
+            currentRightItem = listToMerge[rightIndex];
+            temporaryList.Add(currentRightItem);
+
+            rightIndex++;
+        }
+
+        int lastTemporaryIndex = temporaryList.Count - 1;
+
+        for (int i = 0; i < finalLength; i++) {
+            currentTemporaryItem = temporaryList[lastTemporaryIndex--];
+            listToMerge[lastIndex--] = currentTemporaryItem;
+        }
     }
 }

@@ -11,8 +11,8 @@ public class ListSorterTests
     public void TestSortMethod()
     {
         List<int> arrangement = GivenTheList();
-        List<int> result = WhenListIsSorted(arrangement);
-        ThenShouldReturnSortedList(result);
+        WhenListIsSorted(arrangement);
+        ThenShouldReturnSortedList(arrangement);
     }
 
     private List<int> GivenTheList() {
@@ -20,8 +20,9 @@ public class ListSorterTests
         return testArray.ToList();
     }
 
-    private List<int> WhenListIsSorted(List<int> arrangement) {
-        return ListSorter.Sort(arrangement);
+    private void WhenListIsSorted(List<int> arrangement) {
+        int lastIndex = arrangement.Count - 1;
+        ListSorter.Sort(arrangement, 0, lastIndex);
     }
 
     private void ThenShouldReturnSortedList(List<int> result) {
