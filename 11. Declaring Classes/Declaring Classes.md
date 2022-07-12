@@ -152,6 +152,8 @@ public class Person
         _firstName = firstName;
         _lastName = lastName;
     }
+
+    public string Name => $"";
 }
 ´´´
 
