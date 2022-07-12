@@ -33,7 +33,7 @@ dotnet add reference {path to the project file}
 
 ## Test Suite
 
-On NUnit framework, you can create a test suite by importing the NUnit.Framework namespace and declaring a class with the [TestFixture] decorator:
+On NUnit framework, you can create a test suite by importing the NUnit.Framework namespace and declaring a class with the [TestFixture] attribute:
 
 ´´´
 namespace SampleTests
@@ -49,7 +49,7 @@ public class Tests {
 
 ## Test Case
 
-On NUnit framework, you can create a test case by declaring method with the [Test] decorator inside a test suite:
+On NUnit framework, you can create a test case by declaring method with the [Test] attribute inside a test suite:
 
 ´´´
 [Test]
@@ -68,10 +68,16 @@ The list of possible assertions can be found at: https://docs.nunit.org/articles
 
 ## SetUp Method
 
+To execute a code block before the all the tests in a test suite, you can implement a method with an [OneTimeSetUp] attribute. If you want to do it for each test, use the [SetUp] attribute.
+
 
 ## TearDown Method
+
+To execute a code block after all the tests in a test suite, you can implement a method with an [OneTimeTearDown] attribute. If you want to do it for each test, use the [TearDown] attribute.
 
 
 ## References
 
-MICROSOFT. <b>Teste de unidade em C# com NUnit e .NET Core</b>. Available on: https://docs.microsoft.com/pt-br/dotnet/core/testing/unit-testing-with-nunit.
+MICROSOFT. <b>Unit testing C# with NUnit and .NET Core</b>. Available at: https://docs.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit.
+
+NUNIT. <b>SetUp and TearDown</b>. Available at: https://docs.nunit.org/articles/nunit/writing-tests/setup-teardown/index.html.
