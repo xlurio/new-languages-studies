@@ -60,6 +60,8 @@ public void TestCase() {
 }
 ´´´
 
+Test cases must be public void methods with no parameters.
+
 
 ## Assertions
 
