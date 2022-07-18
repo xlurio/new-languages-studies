@@ -1,7 +1,6 @@
 using CalculatorNS;
 using System;
 
-
 public struct CalculatorArrangements
 {
     public Calculator _calculator;
@@ -15,6 +14,8 @@ public struct CalculatorArrangements
     }
 }
 
+delegate decimal InvalidCalculationDelegate(CalculatorArrangements arrangements);
+
 [TestFixture]
 class CalculatorTests
 {
@@ -26,11 +27,10 @@ class CalculatorTests
     }
 
     private CalculatorArrangements GivenTheSumString() {
-        Calculator calculator = new Calculator();
         string argument = "1 + 2";
 
         return new CalculatorArrangements(
-            calculator,
+            new Calculator(),
             argument
         );
     }
@@ -53,7 +53,22 @@ class CalculatorTests
 
     public void TestInvalidCalculation() {
         arrangement = GivenTheInvalidCalculation();
-        result = WhenItsCalculate(arrangement); // Turn to delegate
-        ThenShouldRaiseInvalidCalculation(result);
+        result = InvalidCalculationDelegate(WhenItsCalculate);
+        ThenShouldRaiseInvalidCalculation(result, arrangements);
+    }
+
+    private CalculatorArrangements GivenTheInvalidCalculation(){
+        string argument = "a + 3";
+
+        return CalculatorArrangements(
+            new Calculator(),
+            argument
+        );
+    }
+
+    private void ThenShouldRaiseInvalidCalculation(
+        InvalidCalculationDelegate result, CalculatorArrangements arrangements
+    ) {
+        Assert.Throws<InvalidCalculationException>(() => result(arrangements));
     }
 }
