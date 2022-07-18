@@ -9,6 +9,10 @@ public class Calculation
 
     private string[] ExtractArguments(string calculation) {
         byte operatorIndex = GetOperatorIndex(calculation);
+        // Extract number before operator
+        // Extract number after operator
+        // Get Operation
+        // Return a ImmutableSortedDictionary with the collected informations
     }
 
     private byte GetOperatorIndex(string calculation) {
