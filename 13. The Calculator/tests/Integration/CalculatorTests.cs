@@ -1,4 +1,5 @@
 using CalculatorNS;
+using CalculatorExceptions;
 using System;
 
 public struct CalculatorArrangements
