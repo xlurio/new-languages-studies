@@ -1,6 +1,6 @@
 namespace CalculatorExceptions;
 
-class InvalidCalculationException : Exception
+public class InvalidCalculationException : Exception
 {
     public InvalidCalculationException()
     {

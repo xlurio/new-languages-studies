@@ -16,3 +16,29 @@ public class Addition : MathOperation
         return firstOperatee + secondOperatee;
     }
 }
+
+public class Substraction : MathOperation
+{
+    public override decimal Calculate(
+        decimal firstOperatee, decimal secondOperatee
+    )
+    {
+        return firstOperatee - secondOperatee;
+    }
+}
+
+public class Multiplication : MathOperation
+{
+    public override decimal Calculate(decimal firstOperatee, decimal secondOperatee)
+    {
+        return firstOperatee * secondOperatee;
+    }
+}
+
+public class Division : MathOperation
+{
+    public override decimal Calculate(decimal firstOperatee, decimal secondOperatee)
+    {
+        return firstOperatee / secondOperatee;
+    }
+}

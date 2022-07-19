@@ -15,15 +15,15 @@ public struct CalculatorArrangements
     }
 }
 
-delegate decimal InvalidCalculationDelegate(CalculatorArrangements arrangements);
-
 [TestFixture]
 class CalculatorTests
 {
+
+
     [Test]
     public void TestCalculate() {
-        arrangement = GivenTheSumString();
-        result = WhenItsCalculate(arrangement);
+        CalculatorArrangements arrangement = GivenTheSumString();
+        decimal result = WhenItsCalculate(arrangement);
         ThenShouldReturnTheSum(result);
     }
 
@@ -41,35 +41,37 @@ class CalculatorTests
         Calculator calculator = arrangements._calculator;
         string argument = arrangements._calculatorArgument;
 
-        return calculator.calculate(argument);
+        return calculator.Calculate(argument);
     }
 
     private void ThenShouldReturnTheSum(decimal sum) {
         decimal expected_result = 3;
         double tolerance = 0.000000001;
-        bool isExpectedResult = Math.Abs(sum - expected_result) <= tolerance;
+        bool isExpectedResult = 
+            (double)Math.Abs(sum - expected_result) <= tolerance;
 
         Assert.True(isExpectedResult);
     }
 
+    [Test]
     public void TestInvalidCalculation() {
-        arrangement = GivenTheInvalidCalculation();
-        result = InvalidCalculationDelegate(WhenItsCalculate);
-        ThenShouldRaiseInvalidCalculation(result, arrangements);
+        CalculatorArrangements arrangements = GivenTheInvalidCalculation();
+        TestDelegate result = () => WhenItsCalculate(arrangements);
+        ThenShouldRaiseInvalidCalculation(result);
     }
 
     private CalculatorArrangements GivenTheInvalidCalculation(){
         string argument = "a + 3";
 
-        return CalculatorArrangements(
+        return new CalculatorArrangements(
             new Calculator(),
             argument
         );
     }
 
     private void ThenShouldRaiseInvalidCalculation(
-        InvalidCalculationDelegate result, CalculatorArrangements arrangements
+        TestDelegate result
     ) {
-        Assert.Throws<InvalidCalculationException>(() => result(arrangements));
+        Assert.Throws<InvalidCalculationException>(result);
     }
 }

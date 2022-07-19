@@ -27,56 +27,75 @@ public class Calculation
     }
 
     private byte GetOperatorIndex(string calculation) {
-        bool hasFoundOperator = false;
-        byte index;
+        byte FOUND_INDEX = 0;
+        byte HAS_FOUND = 1;
+
+        char[] calculationChars = calculation.ToCharArray();
+        byte operatorIndex = 0;
+
+        List<string> hasFoundOperator = new List<string>(2);
+        hasFoundOperator.Add("0");
+        hasFoundOperator.Add("false");
 
         foreach (char mathOperator in MATH_OPERATORS)
         {
-            index = GetOperatorIndexIfContains(
-                calculation, mathOperator
+            operatorIndex = GetOperatorIndexIfContains(
+                calculationChars, mathOperator
             );
             hasFoundOperator = AssertOperatorSearch(
-                index, hasFoundOperator
+                operatorIndex, hasFoundOperator
             );
         }
 
-        if (!hasFoundOperator) {
+        if (hasFoundOperator[HAS_FOUND] == "false") {
             throw new InvalidCalculationException(
                 "A mathematical operator must be passed"
             );
         }
 
-        return index;
+        byte foundIndex = Convert.ToByte(hasFoundOperator[FOUND_INDEX]);
+        return foundIndex;
     }
 
     private byte GetOperatorIndexIfContains(
-        string calculation, char mathOperator
+        char[] calculation, char mathOperator
     )
     {
+
         if (calculation.Contains(mathOperator)) {
-            int operatorIndex = calculation.IndexOf(mathOperator);
+            int operatorIndex = Array.IndexOf(calculation, mathOperator);
             return Convert.ToByte(operatorIndex);
         }
 
         return Convert.ToByte(0);
     }
 
-    private bool AssertOperatorSearch(byte foundIndex, bool hasFoundOperator) {
-        bool wasFound = (foundIndex != 0) && (hasFoundOperator == false);
-        bool thereIsTwoOperators = (foundIndex != 0) && 
-            (hasFoundOperator == true);
+    private List<string> AssertOperatorSearch(
+        byte foundIndex, List<string> hasFoundOperator
+    ) {
+        byte FOUND_INDEX = 0;
+        byte HAS_FOUND = 1;
+
+        bool wasFound = 
+            (foundIndex != 0) && (hasFoundOperator[HAS_FOUND] == "false");
+
+        bool thereAreTwoOperators = (foundIndex != 0) && 
+            (hasFoundOperator[HAS_FOUND] == "true");
         
         if (wasFound) {
-            return true;
+            hasFoundOperator[FOUND_INDEX] = $"{foundIndex}";
+            hasFoundOperator[HAS_FOUND] = "true";
+
+            return hasFoundOperator;
         }
 
-        if (thereIsTwoOperators) {
+        if (thereAreTwoOperators) {
             throw new InvalidCalculationException(
                 "Only one mathematical operator is allowed per calculation"
             );
         }
-
-        return false;
+        
+        return hasFoundOperator;
     }
 
     private decimal ValidateOperatee(string enteredOperatee) {
@@ -86,20 +105,19 @@ public class Calculation
             cleanedOperatee += ValidateCharacter(enteredCharacter);
         }
 
+        cleanedOperatee = cleanedOperatee.Replace(" ", "");
         return Decimal.Parse(cleanedOperatee);
     }
 
     private char ValidateCharacter(char character)
     {
-        char[] validCharacters = "0123456789.".ToCharArray();
+        char[] validCharacters = "0123456789. ".ToCharArray();
         List<char> parsedValidCharacters = validCharacters.ToList();
 
         bool isCharacterAWhitespace = (character == ' ');
         bool isCharacterValid = parsedValidCharacters.Contains(character);
 
-        if (isCharacterAWhitespace) {
-            return '\0';
-        } else if (isCharacterValid) {
+        if (isCharacterValid) {
             return character;
         }
 
