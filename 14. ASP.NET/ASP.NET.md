@@ -7,7 +7,7 @@ This is where are the ASP.NET framework studies.
 
 ## Controllers
 
-This are the classes that handles the HTTP requests received by the servers and deliver responses. The default endpoint URI is defined by `/[controler-name]/[method-name]` where the `[controller-name]` is the name of the controller class without the "controller" word and the `[action-name]` is the name of the controller action that will handle the request. The controller implementation must be a public concrete class, with "Controller" at the and of the name, that inherit from `System.Web.Mvc.Controller`:
+This are the classes that handles the HTTP requests received by the servers and deliver responses. The default endpoint URI is defined by `/[controlername]/[methodname]` where the `[controllername]` is the name of the controller class without the "controller" word and the `[actionname]` is the name of the controller action that will handle the request. The controller implementation must be a public concrete class, with "Controller" at the and of the name, that inherit from `System.Web.Mvc.Controller`:
 
 ```
 namespace MyAPI.Controllers
@@ -39,7 +39,7 @@ class ProductController : Controller
     public ActionResult Index()
     {
         // Action logics
-        return View()
+        return View();
     }
 }
 ```
@@ -58,4 +58,50 @@ Action result are the actual response to the HTTP request. ASP.NET supports seve
 - FilePathResult - Represents a downloadable file (with a path).
 - FileStreamResult - Represents a downloadable file (with a file stream).
 
-All of these inherit from `System.Web.Mvc.ActionResult`. Notice that the example above does not return `ViewResult()`. It returns instead the View() method, a factory method inherited from `Controller` class. Other factory method are 
+All of these inherit from `System.Web.Mvc.ActionResult`. Notice that the example above does not return `ViewResult()`. It returns instead the View() method, a factory method inherited from `Controller` class. Other factory methods are:
+- View - Returns a ViewResult action result.
+- Redirect - Returns a RedirectResult action result.
+- RedirectToAction - Returns a RedirectToRouteResult action result.
+- RedirectToRoute - Returns a RedirectToRouteResult action result.
+- Json - Returns a JsonResult action result.
+- JavaScriptResult - Returns a JavaScriptResult.
+- Content - Returns a ContentResult action result.
+- File - Returns a FileContentResult, FilePathResult, or FileStreamResult depending on the - parameters passed to the method.
+
+
+Any not `ActionResult` return type is automatically wrapped into a `ContentResult`.
+
+### URL Parameters
+
+A action can still receive values from GET request by declaring parameters:
+
+```
+namespace MyAPI.Controllers
+
+using System.Web.Mvc;
+
+class ProductController : Controller
+{
+
+    // GET /product/index/[id]
+    public ActionResult Index(int? id)
+    {
+        // Action logics
+        return Content(id);
+    }
+}
+```
+
+Also, if you expect to receive multiple arguments, you can use the `HttpRequest` property called `QueryString`. `QueryString` is a `Dictionary` with all the values passed by URL in the GET request. The property that stores the HTTP request information is the `Request` property, inhreritted from `Controller`.
+
+class ProductController : Controller
+{
+
+    // GET /product/index/?name=foo
+    public ActionResult Index()
+    {
+        string name = Request.QueryString["name"];
+        return Content(name);
+    }
+}
+```
