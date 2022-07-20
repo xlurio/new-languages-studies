@@ -94,6 +94,7 @@ class ProductController : Controller
 
 Also, if you expect to receive multiple arguments, you can use the `HttpRequest` property called `QueryString`. `QueryString` is a `Dictionary` with all the values passed by URL in the GET request. The property that stores the HTTP request information is the `Request` property, inhreritted from `Controller`.
 
+```
 class ProductController : Controller
 {
 
@@ -105,3 +106,6 @@ class ProductController : Controller
     }
 }
 ```
+
+
+## Routing
