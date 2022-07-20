@@ -4,20 +4,30 @@ using MathOperationNS;
 
 public class Calculation
 {
-    private List<char> MATH_OPERATORS = new List<char> {'+', '-', '*', '/'};
+    private List<char> MATH_OPERATORS = 
+        new List<char> {'+', '-', '*', '/'};
     private MathOperation _operation;
     private decimal _firstOperatee;
     private decimal _secondOperatee;
     public Calculation(string calculation) {
+        const byte OPERATEE = 0;
+        const byte MID_INDEX = 1;
+
         byte operatorIndex = GetOperatorIndex(calculation);
 
-        string firstOperatee = calculation.Substring(0, operatorIndex);
-        _firstOperatee = ValidateOperatee(firstOperatee);
+        List<string> firstOperateeInformation = 
+            GetFirstOperateeSubstring(calculation, 0, operatorIndex);
+        _firstOperatee = ValidateOperatee(firstOperateeInformation[OPERATEE]);
 
-        string secondOperatee = calculation.Substring(operatorIndex + 1);
+        byte secondOperateeIndex = 
+            Convert.ToByte(firstOperateeInformation[MID_INDEX]);
+        string secondOperatee = 
+            calculation.Substring(secondOperateeIndex);
         _secondOperatee = ValidateOperatee(secondOperatee);
 
+        operatorIndex = Convert.ToByte(secondOperateeIndex - 1);
         char mathOperator = calculation[operatorIndex];
+
         _operation = GetOperation(mathOperator);
     }
 
@@ -27,10 +37,12 @@ public class Calculation
     }
 
     private byte GetOperatorIndex(string calculation) {
-        byte FOUND_INDEX = 0;
-        byte HAS_FOUND = 1;
+        const byte FOUND_INDEX = 0;
+        const byte HAS_FOUND = 1;
 
+        calculation = EliminateModifiers(calculation);
         char[] calculationChars = calculation.ToCharArray();
+
         byte operatorIndex = 0;
 
         List<string> hasFoundOperator = new List<string>(2);
@@ -57,6 +69,10 @@ public class Calculation
         return foundIndex;
     }
 
+    private string EliminateModifiers(string stringToClean) {
+        return stringToClean.Replace("(-)", "");
+    }
+
     private byte GetOperatorIndexIfContains(
         char[] calculation, char mathOperator
     )
@@ -73,8 +89,8 @@ public class Calculation
     private List<string> AssertOperatorSearch(
         byte foundIndex, List<string> hasFoundOperator
     ) {
-        byte FOUND_INDEX = 0;
-        byte HAS_FOUND = 1;
+        const byte FOUND_INDEX = 0;
+        const byte HAS_FOUND = 1;
 
         bool wasFound = 
             (foundIndex != 0) && (hasFoundOperator[HAS_FOUND] == "false");
@@ -98,8 +114,25 @@ public class Calculation
         return hasFoundOperator;
     }
 
+    private List<string> GetFirstOperateeSubstring(
+        string toExtractOperatee, byte firstIndex, byte lastIndex
+    ) {
+        if (toExtractOperatee.Contains("(-)")) {
+            lastIndex += 3;
+        }
+
+        string operatee = toExtractOperatee.Substring(0, lastIndex);
+        List<string> foundOperatee = 
+            new List<string>{ operatee, $"{lastIndex + 1}" };
+
+        return foundOperatee;
+    }
+
+
     private decimal ValidateOperatee(string enteredOperatee) {
+        enteredOperatee = ProcessModifiers(enteredOperatee);
         string cleanedOperatee = "";
+
         foreach(char enteredCharacter in enteredOperatee)
         {
             cleanedOperatee += ValidateCharacter(enteredCharacter);
@@ -109,9 +142,13 @@ public class Calculation
         return Decimal.Parse(cleanedOperatee);
     }
 
+    private string ProcessModifiers(string stringToClean) {
+        return stringToClean.Replace("(-)", "-");
+    }
+
     private char ValidateCharacter(char character)
     {
-        char[] validCharacters = "0123456789. ".ToCharArray();
+        char[] validCharacters = "0123456789.- ".ToCharArray();
         List<char> parsedValidCharacters = validCharacters.ToList();
 
         bool isCharacterAWhitespace = (character == ' ');
@@ -134,6 +171,7 @@ public class Calculation
             new Division()
         };
         int operationIndex = MATH_OPERATORS.IndexOf(mathOperator);
+        Console.WriteLine(operationIndex);
 
         return operations[operationIndex];
     }
