@@ -71,6 +71,7 @@ All of these inherit from `System.Web.Mvc.ActionResult`. Notice that the example
 
 Any not `ActionResult` return type is automatically wrapped into a `ContentResult`.
 
+
 ### URL Parameters
 
 A action can still receive values from GET request by declaring parameters:
@@ -109,3 +110,18 @@ class ProductController : Controller
 
 
 ## Routing
+
+For routing in ASP.NET, you can set a URL pattern with `Route` attribute wrapping the `Controller`. The following example sets route pattern to `/api/[controllername]/`:
+
+```
+namespace MyWebAPI.Controllers
+
+using System.Web.Mvc;
+
+[Route("api/[controller]")]
+class SomeController : Controller
+{
+    // Actions
+}
+
+```
