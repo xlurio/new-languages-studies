@@ -1,7 +1,19 @@
+namespace GreetingsControllerTests.Integration;
+
 using HelloWorldAPI;
 using HelloWorldAPI.Controllers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http;
+
+struct PostRequestBody
+{
+  public string Name { get; set; }
+
+  public PostRequestBody(string name)
+  {
+    Name = name;
+  }
+}
 
 [TestFixture]
 class GreetingsControllerTests
@@ -55,7 +67,11 @@ class GreetingsControllerTests
 
   private async Task<string> WhenPostRequested(string url)
   {
-    HttpContent toSendContent = new StringContent("name=Foo");
+    Dictionary<string, string> toSendData = new Dictionary<string, string> {
+      {"name", "Foo"}
+    };
+    HttpContent toSendContent = new FormUrlEncodedContent(toSendData);
+
     HttpResponseMessage response = await _client.PostAsync(url, toSendContent);
     HttpContent responseContent = response.Content;
     string result = await responseContent.ReadAsStringAsync();

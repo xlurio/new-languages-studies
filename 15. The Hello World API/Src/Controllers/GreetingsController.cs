@@ -19,10 +19,10 @@ public class GreetingsController : ControllerBase
     [HttpPost(Name="GreetUser")]
     public ActionResult GreetUser()
     {
-        string userName = Request.Params.Form[0];
+        string userName = Request.Form["name"];
         string message = $"Hello, {userName}!";
         Greeting greeting = new Greeting(message);
-        
+
         return Ok(greeting);
     }
 }
