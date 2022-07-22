@@ -3,11 +3,18 @@ namespace ToDoAPI.Controllers;
 using System.Web.Http;
 using Microsoft.AspNetCore.Mvc;
 using ToDoAPI.Models;
+using ToDoAPI.Services;
 
 [ApiController]
 [Route("api/[controller]")]
 public class ToDoController : ControllerBase
 {
+  public IUnitOfWork Uow { get; }
+  public ToDoController(IUnitOfWork unitOfWork)
+  {
+    Uow = unitOfWork;
+  }
+
   [HttpPost(Name="CreateTask")]
   public ActionResult CreateTask()
   {
@@ -17,7 +24,9 @@ public class ToDoController : ControllerBase
     DateTime parsedDeadline = ParseDeadline(deadline);
 
     ToDoTask task = new ToDoTask(title, parsedDeadline);
-    return Ok(task);
+    Uow.ToDoTasks.Add(task);
+
+    return Ok(Uow.ToDoTaskObjects);
   }
 
   private DateTime ParseDeadline(string deadlineToParse)

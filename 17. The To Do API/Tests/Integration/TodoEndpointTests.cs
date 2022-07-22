@@ -3,41 +3,39 @@ namespace ToDoAPITests.Integration;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http;
 using ToDoAPI;
-
-struct PostRequestArrangements
-{
-  public string Url { get; }
-  public HttpContent Content { get; }
-
-  public PostRequestArrangements(string url, HttpContent content)
-  {
-    Url = url;
-    Content = content;
-  }
-}
+using ToDoAPITests.TestHelpers;
+using ToDoAPI.Services;
+using ToDoAPI.Models;
 
 [TestFixture]
 public class TodoEndpointTests
 {
-  private HttpClient _client;
+  private HttpClient _controller;
 
   [SetUp]
   public void SetUp()
   {
-    WebApplicationFactory<Program> factory =
-      new WebApplicationFactory<Program>();
-    _client = factory.CreateClient();
+    DateTime task1Deadline = new DateTime(2022, 07, 22);
+    ToDoTask task1 = 
+      new ToDoTask("Talk to the college atendant", task1Deadline);
+
+    List<ToDoTask> taskObjects = new List<ToDoTask>{
+      task1
+    };
+
+    IUnitOfWork Uow = new FakeUnitOfWork(taskObjects);
+    _controller = new GreetingsControllerTests(Uow);
   }
 
   [Test]
   public async Task CreateTask()
   {
-    PostRequestArrangements arrangements = GivenThePostRequest();
+    string arrangements = GivenThePostRequest();
     string result = await WhenEndpointIsPostRequested(arrangements);
     ThenShouldCreateTask(result);
   }
 
-  private PostRequestArrangements GivenThePostRequest()
+  private async Task<string> GivenThePostRequest()
   {
     Dictionary<string, string> requestBodyValue =
       new Dictionary<string, string>{
@@ -45,16 +43,13 @@ public class TodoEndpointTests
         {"deadline", "2022-07-27"}
       };
     HttpContent requestBody = new FormUrlEncodedContent(requestBodyValue);
+    string bodyValue = await requestBody.ReadAsStringAsync();
 
-    string url = "/api/todo";
-
-    return new PostRequestArrangements(
-      url, requestBody
-    );
+    return bodyValue;
   }
 
   private async Task<string> WhenEndpointIsPostRequested(
-    PostRequestArrangements arrangements
+    string arrangements
   )
   {
     string url = arrangements.Url;
