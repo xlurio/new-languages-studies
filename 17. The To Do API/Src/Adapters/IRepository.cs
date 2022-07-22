@@ -8,5 +8,5 @@ public interface IRepository
 
     public List<IModel> Get();
 
-    public List<IModel> Get(int reference);
+    public IModel Get(int reference);
 }

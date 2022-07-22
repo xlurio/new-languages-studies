@@ -26,6 +26,7 @@ public class TodoEndpointTests
 {
   private ToDoController _controller;
   private IUnitOfWork _unitOfWork;
+  private List<IModel> taskObjects;
 
   [SetUp]
   public void SetUp()
@@ -34,7 +35,7 @@ public class TodoEndpointTests
     ToDoTask task1 = 
       new ToDoTask("Talk to the college atendant", task1Deadline);
 
-    List<IModel> taskObjects = new List<IModel>{
+    taskObjects = new List<IModel>{
       task1
     };
 
@@ -74,9 +75,58 @@ public class TodoEndpointTests
     List<IModel> result = _unitOfWork.ToDoTaskObjects.Get();
     int numberOfObjects = result.Count;
 
-    ToDoTask objectCreated = result.Last() as ToDoTask;
+    ToDoTask objectCreated = (result.Last() as ToDoTask)!;
 
     Assert.That(numberOfObjects, Is.EqualTo(2));
     Assert.That(objectCreated.Title, Is.EqualTo("Register to college"));
+    Assert.That((_unitOfWork as FakeUnitOfWork)!.Saved, Is.EqualTo(true));
+  }
+
+  [Test]
+  public void GetTasks()
+  {
+    List<IModel> result = WhenEndpointIsGetRequested()!;
+    ThenShouldRetrieveTasks(result);
+  }
+
+  private List<IModel>? WhenEndpointIsGetRequested()
+  {
+    OkObjectResult response = (_controller.GetTasks() as OkObjectResult)!;
+    return (response!).Value as List<IModel>;
+  }
+
+  private void ThenShouldRetrieveTasks(List<IModel> result)
+  {
+    Assert.That(result.Count, Is.GreaterThan(0));
+  }
+
+  [Test]
+  public void GetTaskById()
+  {
+    int arrangements = GivenTheTaskId();
+    ToDoTask result = WhenEndpointIsGetRequestedWithIdParameter(arrangements)!;
+    ThenShouldReturnCorrespondentTask(result, arrangements);
+  }
+
+  private int GivenTheTaskId()
+  {
+    ToDoTask task1 = (taskObjects[0] as ToDoTask)!;
+    return task1.TaskId;
+  }
+
+  private ToDoTask? WhenEndpointIsGetRequestedWithIdParameter(
+    int id
+  )
+  {
+    OkObjectResult response = _controller.GetTaskById(id);
+    return (response!).Value as ToDoTask;
+  }
+
+  private void ThenShouldReturnCorrespondentTask(ToDoTask result, int taskId)
+  {
+    ToDoTask expectedObject = 
+      (_unitOfWork.ToDoTaskObjects.Get(taskId) as ToDoTask)!;
+
+    Assert.That(result.TaskId, Is.EqualTo(expectedObject.TaskId));
   }
 }

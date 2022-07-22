@@ -2,6 +2,7 @@ namespace ToDoAPITests.TestHelpers;
 
 using ToDoAPI.Adapters;
 using ToDoAPI.Models;
+using ToDoAPI.Exceptions;
 using System.Collections.Generic;
 
 public class FakeRepository : IRepository
@@ -27,8 +28,20 @@ public class FakeRepository : IRepository
         return _data;
     }
 
-    public List<IModel> Get(int reference)
+    public IModel Get(int reference)
     {
-        return _data.FindAll(objectData => (objectData as ToDoTask).TaskId == reference);
+        IModel? objectFound = 
+            _data.Find(
+                objectData => (objectData as ToDoTask)!.TaskId == reference
+            );
+
+        if (objectFound == null)
+        {
+            throw new TaskNotFoundException(
+                $"No task was found with the id {reference}"
+            );
+        }
+
+        return objectFound!;
     }
 }

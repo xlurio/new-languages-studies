@@ -15,6 +15,12 @@ public class ToDoController : ControllerBase
     Uow = unitOfWork;
   }
 
+  [HttpGet(Name="GetTasks")]
+  public ActionResult GetTasks()
+  {
+    return Ok(Uow.ToDoTaskObjects.Get());
+  }
+
   [HttpPost(Name="CreateTask")]
   public ActionResult CreateTask(
     [FromBody] string title, [FromBody] string deadline
@@ -26,7 +32,7 @@ public class ToDoController : ControllerBase
     Uow.ToDoTaskObjects.Add(task);
     Uow.Commit();
     
-    return Ok(Uow.ToDoTaskObjects);
+    return Ok(Uow.ToDoTaskObjects.Get());
   }
 
   private DateTime ParseDeadline(string deadlineToParse)
