@@ -13,7 +13,7 @@ struct PostRequestArrangements
 {
   public string Title { get; }
   public string Deadline { get; }
-
+ 
   public PostRequestArrangements(string title, string deadline)
   {
     Title = title;
