@@ -2,10 +2,12 @@ namespace ToDoAPITests.TestHelpers;
 
 using ToDoAPI.Services;
 using ToDoAPI.Models;
+using ToDoAPI.Adapters;
 
 public class FakeUnitOfWork : IUnitOfWork
 {
     private bool _saved;
+    public IRepository ToDoTaskObjects { get; }
     public bool Saved { 
         get
         {
@@ -16,7 +18,7 @@ public class FakeUnitOfWork : IUnitOfWork
         }
     }
 
-    public FakeUnitOfWork(List<ToDoTask> context)
+    public FakeUnitOfWork(List<IModel> context)
     {
         ToDoTaskObjects = new FakeRepository(context);
     }

@@ -1,10 +1,12 @@
 namespace ToDoAPI.Adapters;
 
-interface IRepository
+using ToDoAPI.Models;
+
+public interface IRepository
 {
-    public void Add(IEntity objectToAdd);
+    public void Add(IModel objectToAdd);
 
-    public List<IEntity> Get();
+    public List<IModel> Get();
 
-    public List<IEntify> Get(int reference);
+    public List<IModel> Get(int reference);
 }

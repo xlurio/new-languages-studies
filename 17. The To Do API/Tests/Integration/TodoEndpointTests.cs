@@ -6,11 +6,26 @@ using ToDoAPI;
 using ToDoAPITests.TestHelpers;
 using ToDoAPI.Services;
 using ToDoAPI.Models;
+using ToDoAPI.Controllers;
+using Microsoft.AspNetCore.Mvc;
+
+struct PostRequestArrangements
+{
+  public string Title { get; }
+  public string Deadline { get; }
+
+  public PostRequestArrangements(string title, string deadline)
+  {
+    Title = title;
+    Deadline = deadline;
+  }
+}
 
 [TestFixture]
 public class TodoEndpointTests
 {
-  private HttpClient _controller;
+  private ToDoController _controller;
+  private IUnitOfWork _unitOfWork;
 
   [SetUp]
   public void SetUp()
@@ -19,57 +34,49 @@ public class TodoEndpointTests
     ToDoTask task1 = 
       new ToDoTask("Talk to the college atendant", task1Deadline);
 
-    List<ToDoTask> taskObjects = new List<ToDoTask>{
+    List<IModel> taskObjects = new List<IModel>{
       task1
     };
 
-    IUnitOfWork Uow = new FakeUnitOfWork(taskObjects);
-    _controller = new GreetingsControllerTests(Uow);
+    _unitOfWork = new FakeUnitOfWork(taskObjects);
+    _controller = new ToDoController(_unitOfWork);
   }
 
   [Test]
-  public async Task CreateTask()
+  public void CreateTask()
   {
-    string arrangements = GivenThePostRequest();
-    string result = await WhenEndpointIsPostRequested(arrangements);
-    ThenShouldCreateTask(result);
+    PostRequestArrangements arrangements = GivenThePostRequest();
+    WhenEndpointIsPostRequested(arrangements);
+    ThenShouldCreateTask();
   }
 
-  private async Task<string> GivenThePostRequest()
+  private PostRequestArrangements GivenThePostRequest()
   {
-    Dictionary<string, string> requestBodyValue =
-      new Dictionary<string, string>{
-        {"title", "Register to college"},
-        {"deadline", "2022-07-27"}
-      };
-    HttpContent requestBody = new FormUrlEncodedContent(requestBodyValue);
-    string bodyValue = await requestBody.ReadAsStringAsync();
+    string title = "Register to college";
+    string deadline = "2022-07-27";
 
-    return bodyValue;
+    return new PostRequestArrangements(
+      title, deadline
+    );
   }
 
-  private async Task<string> WhenEndpointIsPostRequested(
-    string arrangements
+  private void WhenEndpointIsPostRequested(
+    PostRequestArrangements arrangements
   )
   {
-    string url = arrangements.Url;
-    HttpContent requestContent = arrangements.Content;
-    HttpResponseMessage response = await _client.PostAsync(url, requestContent);
-
-    HttpContent responseBody = response.Content;
-    string responseBodyValue = await responseBody.ReadAsStringAsync();
-
-    return responseBodyValue;
+    string title = arrangements.Title;
+    string deadline = arrangements.Deadline;
+    ActionResult result = _controller.CreateTask(title, deadline);
   }
 
-  private void ThenShouldCreateTask(string responseBody){
-    List<string> expectedResults = new List<string>(2);
-    expectedResults.Add("Register to college");
-    expectedResults.Add("2022-07-27");
+  private void ThenShouldCreateTask(){
 
-    foreach(string result in expectedResults)
-    {
-      StringAssert.Contains(result, responseBody);
-    }
+    List<IModel> result = _unitOfWork.ToDoTaskObjects.Get();
+    int numberOfObjects = result.Count;
+
+    ToDoTask objectCreated = result.Last() as ToDoTask;
+
+    Assert.That(numberOfObjects, Is.EqualTo(2));
+    Assert.That(objectCreated.Title, Is.EqualTo("Register to college"));
   }
 }

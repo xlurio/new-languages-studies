@@ -16,16 +16,16 @@ public class ToDoController : ControllerBase
   }
 
   [HttpPost(Name="CreateTask")]
-  public ActionResult CreateTask()
+  public ActionResult CreateTask(
+    [FromBody] string title, [FromBody] string deadline
+  )
   {
-    string title = Request.Form["title"];
-
-    string deadline = Request.Form["deadline"];
     DateTime parsedDeadline = ParseDeadline(deadline);
 
     ToDoTask task = new ToDoTask(title, parsedDeadline);
-    Uow.ToDoTasks.Add(task);
-
+    Uow.ToDoTaskObjects.Add(task);
+    Uow.Commit();
+    
     return Ok(Uow.ToDoTaskObjects);
   }
 

@@ -1,13 +1,19 @@
 namespace ToDoAPI.Services;
 
 using System.Data.Entity;
+using ToDoAPI.Adapters;
 
 public class UnitOfWork : IUnitOfWork
 {
+    private DbContext _context;
+    public IRepository ToDoTaskObjects { get; }
+    
     public UnitOfWork ()
     {
-        DbContext context = new ToDoContext();
-        ToDoTaskObjects = new ToDoTasks(context);
+        _context = new ToDoContext();
     }
 
+    public void Commit(){
+        _context.SaveChanges();
+    }
 }

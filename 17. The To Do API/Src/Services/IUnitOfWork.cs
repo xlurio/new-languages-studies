@@ -2,7 +2,7 @@ namespace ToDoAPI.Services;
 
 using ToDoAPI.Adapters;
 
-interface IUnitOfWork
+public interface IUnitOfWork
 {
     public IRepository ToDoTaskObjects { get; }
 
