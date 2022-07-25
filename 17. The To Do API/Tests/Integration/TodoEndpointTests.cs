@@ -9,15 +9,15 @@ using ToDoAPI.Models;
 using ToDoAPI.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
-struct PostRequestArrangements
+public struct PutRequestArrangements
 {
-  public string Title { get; }
-  public string Deadline { get; }
- 
-  public PostRequestArrangements(string title, string deadline)
+  public int TaskId { get; }
+  public ToDoTask NewTask { get; }
+
+  public PutRequestArrangements (int taskId, ToDoTask newTask)
   {
-    Title = title;
-    Deadline = deadline;
+    TaskId = taskId;
+    NewTask = newTask;
   }
 }
 
@@ -46,32 +46,29 @@ public class TodoEndpointTests
   [Test]
   public void CreateTask()
   {
-    PostRequestArrangements arrangements = GivenThePostRequest();
+    ToDoTask arrangements = GivenThePostRequest();
     WhenEndpointIsPostRequested(arrangements);
     ThenShouldCreateTask();
   }
 
-  private PostRequestArrangements GivenThePostRequest()
+  private ToDoTask GivenThePostRequest()
   {
     string title = "Register to college";
     string deadline = "2022-07-27";
 
-    return new PostRequestArrangements(
+    return new ToDoTask(
       title, deadline
     );
   }
 
   private void WhenEndpointIsPostRequested(
-    PostRequestArrangements arrangements
+    ToDoTask arrangements
   )
   {
-    string title = arrangements.Title;
-    string deadline = arrangements.Deadline;
-    ActionResult result = _controller.CreateTask(title, deadline);
+    ActionResult result = _controller.CreateTask(arrangements);
   }
 
   private void ThenShouldCreateTask(){
-
     List<IModel> result = _unitOfWork.ToDoTaskObjects.Get();
     int numberOfObjects = result.Count;
 
@@ -118,7 +115,7 @@ public class TodoEndpointTests
     int id
   )
   {
-    OkObjectResult response = _controller.GetTaskById(id);
+    OkObjectResult response = (_controller.GetTaskById(id) as OkObjectResult)!;
     return (response!).Value as ToDoTask;
   }
 
@@ -128,5 +125,42 @@ public class TodoEndpointTests
       (_unitOfWork.ToDoTaskObjects.Get(taskId) as ToDoTask)!;
 
     Assert.That(result.TaskId, Is.EqualTo(expectedObject.TaskId));
+  }
+
+  [Test]
+  public void ReplaceTask()
+  {
+    PutRequestArrangements arrangements = GivenThePutRequest();
+    WhenEndpointIsPutRequested(arrangements);
+    ThenTheObjectIsReplaced(arrangements);
+  }
+
+  private PutRequestArrangements GivenThePutRequest()
+  {
+    ToDoTask taskToUpdate = (taskObjects[0] as ToDoTask)!;
+    int taskToUpdateId = taskToUpdate.TaskId;
+
+    ToDoTask newTask = new ToDoTask(
+      "Reply Andre", "2022-07-25"
+    );
+
+    return new PutRequestArrangements(
+      taskToUpdateId, newTask
+    );
+  }
+
+  private void WhenEndpointIsPutRequested(PutRequestArrangements arrangements)
+  {
+    _controller.ReplaceTask(
+      arrangements.TaskId, arrangements.NewTask
+    );
+  }
+
+  private void ThenTheObjectIsReplaced(PutRequestArrangements arrangements)
+  {
+    int taskId = arrangements.TaskId;
+    ToDoTask replacedTask = 
+      (_unitOfWork.ToDoTaskObjects.Get(taskId) as ToDoTask)!;
+    Assert.That(replacedTask.Title, Is.EqualTo(arrangements.NewTask.Title));
   }
 }

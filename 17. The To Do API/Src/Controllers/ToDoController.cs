@@ -21,27 +21,31 @@ public class ToDoController : ControllerBase
     return Ok(Uow.ToDoTaskObjects.Get());
   }
 
+  [HttpGet("{id}")]
+  public ActionResult GetTaskById(int id)
+  {
+    return Ok(Uow.ToDoTaskObjects.Get(id));
+  }
+
   [HttpPost(Name="CreateTask")]
   public ActionResult CreateTask(
-    [FromBody] string title, [FromBody] string deadline
+    ToDoTask task
   )
   {
-    DateTime parsedDeadline = ParseDeadline(deadline);
-
-    ToDoTask task = new ToDoTask(title, parsedDeadline);
     Uow.ToDoTaskObjects.Add(task);
     Uow.Commit();
     
     return Ok(Uow.ToDoTaskObjects.Get());
   }
 
-  private DateTime ParseDeadline(string deadlineToParse)
+  [HttpPut("{id}")]
+  public ActionResult ReplaceTask(int id, ToDoTask task)
   {
-    string dateFormat = "yyyy-MM-dd";
-    DateTime parsedDeadline = DateTime.ParseExact(
-      deadlineToParse, dateFormat, null
-    );
+    ToDoTask taskToReplace = (Uow.ToDoTaskObjects.Get(id) as ToDoTask)!;
+    taskToReplace.Title = task.Title;
+    taskToReplace.Deadline = task.Deadline;
 
-    return parsedDeadline;
+    Uow.Commit();
+    return Ok(taskToReplace);
   }
 }
