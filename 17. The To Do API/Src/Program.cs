@@ -11,7 +11,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddDbContext<ToDoContext>(options =>
-            options.UseSqlServer(
+            options.UseSqlite(
                 builder.Configuration.GetConnectionString("SQLiteDatabase")
             ));
         builder.Services.AddScoped<ToDoContext>();

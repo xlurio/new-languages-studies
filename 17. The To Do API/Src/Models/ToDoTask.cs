@@ -1,11 +1,14 @@
 namespace ToDoAPI.Models;
 
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 [Table("ToDoTasks")]
 public class ToDoTask : IModel
 {
   public int TaskId { get; set; }
+
+  [MaxLength(254)]
   public string Title { get; set; }
   public DateTime? Deadline { get; set; }
 
