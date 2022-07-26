@@ -12,7 +12,7 @@ public class Program
 
         builder.Services.AddDbContext<ToDoContext>(options =>
             options.UseSqlServer(
-                builder.Configuration.GetConnectionString("SampleDatabase")
+                builder.Configuration.GetConnectionString("SQLiteDatabase")
             ));
         builder.Services.AddScoped<ToDoContext>();
 

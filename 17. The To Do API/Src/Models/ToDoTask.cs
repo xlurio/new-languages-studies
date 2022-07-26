@@ -9,6 +9,10 @@ public class ToDoTask : IModel
   public string Title { get; set; }
   public DateTime? Deadline { get; set; }
 
+  public ToDoTask()
+  {
+  }
+
   public ToDoTask(string title, DateTime deadline)
   {
     Random random = new Random();
