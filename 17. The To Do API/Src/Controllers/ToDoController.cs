@@ -4,6 +4,8 @@ using System.Web.Http;
 using Microsoft.AspNetCore.Mvc;
 using ToDoAPI.Models;
 using ToDoAPI.Services;
+using ToDoAPI.Exceptions;
+using Microsoft.AspNetCore.JsonPatch;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -22,30 +24,72 @@ public class ToDoController : ControllerBase
   }
 
   [HttpGet("{id}")]
-  public ActionResult GetTaskById(int id)
+  public ActionResult GetTaskById([FromRoute] int id)
   {
-    return Ok(Uow.ToDoTaskObjects.Get(id));
+    try {
+      return Ok(Uow.ToDoTaskObjects.Get(id));
+
+    } catch (TaskNotFoundException) {
+      return NotFound($"No task found with the reference {id}");
+
+    }
   }
 
-  [HttpPost(Name="CreateTask")]
+  [HttpPost]
   public ActionResult CreateTask(
-    ToDoTask task
+    [FromBody] ToDoTask task
   )
   {
     Uow.ToDoTaskObjects.Add(task);
     Uow.Commit();
-    
-    return Ok(Uow.ToDoTaskObjects.Get());
+
+    return CreatedAtAction(
+      nameof(GetTaskById), new { id = task.TaskId }, task
+    );
   }
 
   [HttpPut("{id}")]
-  public ActionResult ReplaceTask(int id, ToDoTask task)
+  public ActionResult ReplaceTask([FromRoute] int id, [FromBody]ToDoTask task)
   {
-    ToDoTask taskToReplace = (Uow.ToDoTaskObjects.Get(id) as ToDoTask)!;
-    taskToReplace.Title = task.Title;
-    taskToReplace.Deadline = task.Deadline;
+    try {
+      Uow.ToDoTaskObjects.Replace(id, task);
+      Uow.Commit();
+      return NoContent();
 
-    Uow.Commit();
-    return Ok(taskToReplace);
+    } catch (TaskNotFoundException) {
+      return NotFound($"No task found with the reference {id}");
+
+    }
+  }
+
+  [HttpPatch("{id}")]
+  public ActionResult UpdateTask(
+    [FromRoute]int id, [FromBody] JsonPatchDocument task
+  )
+  {
+    try {
+      Uow.ToDoTaskObjects.Update(id, task);
+      Uow.Commit();
+      return NoContent();
+
+    } catch (TaskNotFoundException) {
+      return NotFound($"No task found with the reference {id}");
+
+    }
+  }
+
+  [HttpDelete("{id}")]
+  public ActionResult DeleteTask([FromRoute] int id)
+  {
+    try {
+      Uow.ToDoTaskObjects.Remove(id);
+      Uow.Commit();
+
+      return Ok($"Task with id {id} was deleted");
+
+    } catch (TaskNotFoundException) {
+      return NotFound($"No task found with the reference {id}");
+
+    }
   }
 }
