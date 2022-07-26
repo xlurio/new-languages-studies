@@ -8,9 +8,9 @@ public class UnitOfWork : IUnitOfWork
     private DbContext _context;
     public IRepository ToDoTaskObjects { get; }
 
-    public UnitOfWork ()
+    public UnitOfWork (DbContext context)
     {
-        _context = new ToDoContext();
+        _context = context;
         ToDoTaskObjects = new TaskRepository(_context);
     }
 

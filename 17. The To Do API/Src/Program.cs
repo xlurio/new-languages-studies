@@ -14,7 +14,7 @@ public class Program
             options.UseSqlServer(
                 builder.Configuration.GetConnectionString("SampleDatabase")
             ));
-        builder.Services.AddScoped<IToDoContext, ToDoContext>();
+        builder.Services.AddScoped<ToDoContext>();
 
         // Add services to the container.
         builder.Services.AddSingleton<IUnitOfWork, UnitOfWork>();

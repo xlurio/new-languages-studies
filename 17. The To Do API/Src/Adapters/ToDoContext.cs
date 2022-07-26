@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 
-public class ToDoContext : DbContext, IToDoContext
+public class ToDoContext : DbContext
 {
     public DbSet<ToDoTask> ToDoTasks { get; set; }
 
