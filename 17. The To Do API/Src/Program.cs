@@ -10,9 +10,16 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.AddDbContext<ToDoContext>(options =>
+            options.UseSqlServer(
+                builder.Configuration.GetConnectionString("SampleDatabase")
+            ));
+        builder.Services.AddScoped<IToDoContext, ToDoContext>();
+
         // Add services to the container.
         builder.Services.AddSingleton<IUnitOfWork, UnitOfWork>();
         builder.Services.AddControllers().AddNewtonsoftJson();
+
         // Learn more about configuring Swagger/OpenAPI at
         // https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
