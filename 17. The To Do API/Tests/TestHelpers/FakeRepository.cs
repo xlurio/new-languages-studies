@@ -5,6 +5,7 @@ using ToDoAPI.Models;
 using ToDoAPI.Exceptions;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.JsonPatch;
+using ToDoAPI.Filters;
 
 public class FakeRepository : IRepository
 {
@@ -70,5 +71,49 @@ public class FakeRepository : IRepository
         int indexToRemove = _data.IndexOf(objectFound);
 
         _data.RemoveAt(indexToRemove);
+    }
+
+    public List<IModel> Filter(IFilter filter)
+    {
+        ToDoTaskFilter parsedFilter = (filter as ToDoTaskFilter)!;
+
+        List<IModel> objectsFound =
+            _data.FindAll(
+                objectData => CheckFilterOnTask(parsedFilter, objectData)
+            );
+
+        if (objectsFound.Count > 0)
+        {
+            return objectsFound;
+        }
+
+        throw new TaskNotFoundException(
+            "No task was found within the parameters"
+        );
+    }
+
+    private bool CheckFilterOnTask(ToDoTaskFilter filter, IModel objectToFilter)
+    {
+        DateTime taskDeadline = GetTaskDeadline(objectToFilter);
+
+        bool isAfterLowerBound =
+        IsDateAfter(taskDeadline, filter.FromDate);
+
+        bool isBeforeUpperBound =
+        IsDateAfter(filter.ToDate, taskDeadline);
+
+        return isAfterLowerBound && isBeforeUpperBound;
+    }
+
+    private DateTime GetTaskDeadline(IModel taskObject)
+    {
+        ToDoTask task = (taskObject as ToDoTask)!;
+        return task.Deadline.Value;
+    }
+
+    private bool IsDateAfter(DateTime dateToCheck, DateTime dateBefore)
+    {
+        int dayVariation = DateTime.Compare(dateBefore, dateToCheck);
+        return dayVariation < 0;
     }
 }

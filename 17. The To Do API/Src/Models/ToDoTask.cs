@@ -20,9 +20,9 @@ public class ToDoTask : IModel
   {
     Random random = new Random();
     TaskId = random.Next(0,1000);
-    
+
     Title = title;
-    
+
     Deadline = deadline;
   }
 
@@ -30,9 +30,9 @@ public class ToDoTask : IModel
   {
     Random random = new Random();
     TaskId = random.Next(0,1000);
-    
+
     Title = title;
-    
+
     Deadline = ParseDeadline(deadline);
   }
 

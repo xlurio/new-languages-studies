@@ -133,5 +133,8 @@ $RECYCLE.BIN/
 _NCrunch*
 
 # Visual Studio Code
-
 .vscode/
+
+# Database
+Migrations/
+*.db

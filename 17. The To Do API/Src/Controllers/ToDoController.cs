@@ -5,29 +5,45 @@ using Microsoft.AspNetCore.Mvc;
 using ToDoAPI.Models;
 using ToDoAPI.Services;
 using ToDoAPI.Exceptions;
+using ToDoAPI.Adapters;
 using Microsoft.AspNetCore.JsonPatch;
+using ToDoAPI.Filters;
 
 [ApiController]
 [Route("api/[controller]")]
 public class ToDoController : ControllerBase
 {
-  public IUnitOfWork Uow { get; }
+  private IUnitOfWork _unitOfWork;
   public ToDoController(IUnitOfWork unitOfWork)
   {
-    Uow = unitOfWork;
+    _unitOfWork = unitOfWork;
   }
 
   [HttpGet(Name="GetTasks")]
   public ActionResult GetTasks()
   {
-    return Ok(Uow.ToDoTaskObjects.Get());
+    var tasks = _unitOfWork.ToDoTaskObjects.Get();
+    return Ok(tasks);
+  }
+
+  [HttpGet(Name="GetTasksWithFilters")]
+  public ActionResult GetTasksWithFilters([FromQuery] ToDoTaskFilter filter)
+  {
+    try
+    {
+      List<IModel> tasks = _unitOfWork.ToDoTaskObjects.Filter(filter);
+      return Ok(tasks);
+
+    } catch (TaskNotFoundException) {
+      return BadRequest("No task was found within the parameters");
+    }
   }
 
   [HttpGet("{id}")]
   public ActionResult GetTaskById([FromRoute] int id)
   {
     try {
-      return Ok(Uow.ToDoTaskObjects.Get(id));
+      return Ok(_unitOfWork.ToDoTaskObjects.Get(id));
 
     } catch (TaskNotFoundException) {
       return NotFound($"No task found with the reference {id}");
@@ -40,8 +56,8 @@ public class ToDoController : ControllerBase
     [FromBody] ToDoTask task
   )
   {
-    Uow.ToDoTaskObjects.Add(task);
-    Uow.Commit();
+    _unitOfWork.ToDoTaskObjects.Add(task);
+    _unitOfWork.Commit();
 
     return CreatedAtAction(
       nameof(GetTaskById), new { id = task.TaskId }, task
@@ -52,8 +68,8 @@ public class ToDoController : ControllerBase
   public ActionResult ReplaceTask([FromRoute] int id, [FromBody]ToDoTask task)
   {
     try {
-      Uow.ToDoTaskObjects.Replace(id, task);
-      Uow.Commit();
+      _unitOfWork.ToDoTaskObjects.Replace(id, task);
+      _unitOfWork.Commit();
       return NoContent();
 
     } catch (TaskNotFoundException) {
@@ -68,8 +84,8 @@ public class ToDoController : ControllerBase
   )
   {
     try {
-      Uow.ToDoTaskObjects.Update(id, task);
-      Uow.Commit();
+      _unitOfWork.ToDoTaskObjects.Update(id, task);
+      _unitOfWork.Commit();
       return NoContent();
 
     } catch (TaskNotFoundException) {
@@ -82,8 +98,8 @@ public class ToDoController : ControllerBase
   public ActionResult DeleteTask([FromRoute] int id)
   {
     try {
-      Uow.ToDoTaskObjects.Remove(id);
-      Uow.Commit();
+      _unitOfWork.ToDoTaskObjects.Remove(id);
+      _unitOfWork.Commit();
 
       return Ok($"Task with id {id} was deleted");
 

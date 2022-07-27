@@ -9,6 +9,7 @@ using ToDoAPI.Models;
 using ToDoAPI.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.JsonPatch;
+using ToDoAPI.Filters;
 
 struct PutRequestArrangements
 {
@@ -218,7 +219,7 @@ public class TodoEndpointTests
       (_unitOfWork.ToDoTaskObjects.Get(arrangements.TaskId) as ToDoTask)!;
 
     Assert.That(taskUpdated.Title, Is.EqualTo(expectedTitle));
-    Assert.That((_unitOfWork as FakeUnitOfWork).Saved, Is.EqualTo(true));
+    Assert.That((_unitOfWork as FakeUnitOfWork)!.Saved, Is.EqualTo(true));
   }
 
   [Test]
@@ -241,5 +242,38 @@ public class TodoEndpointTests
 
     Assert.That(result, Is.EqualTo(expectedObjectsLeft));
     Assert.That((_unitOfWork as FakeUnitOfWork)!.Saved, Is.EqualTo(true));
+  }
+
+  [Test]
+  public void FilterTasks()
+  {
+    ToDoTaskFilter arrangements = GivenTheFilter();
+    List<IModel> results = WhenGetRequestedWithFilter(arrangements);
+    ThenRetrieveFilteredTasks(results);
+  }
+
+  private ToDoTaskFilter GivenTheFilter()
+  {
+    return new ToDoTaskFilter(
+      "2022-07-21", "2022-07-23"
+    );
+  }
+
+  private List<IModel> WhenGetRequestedWithFilter(ToDoTaskFilter arrangements)
+  {
+    OkObjectResult? response =
+      _controller.GetTasksWithFilters(arrangements) as OkObjectResult;
+    List<IModel> results = (response!.Value as List<IModel>)!;
+
+    return results;
+  }
+
+  private void ThenRetrieveFilteredTasks(List<IModel> results)
+  {
+    ToDoTask expectedResult = (taskObjects[0] as ToDoTask)!;
+    ToDoTask result = (results[0] as ToDoTask)!;
+
+    Assert.That(result.Title, Is.EqualTo(expectedResult.Title));
+    Assert.That(results.Count, Is.EqualTo(1));
   }
 }

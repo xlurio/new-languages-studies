@@ -1,6 +1,7 @@
 namespace ToDoAPI.Adapters;
 
 using ToDoAPI.Models;
+using ToDoAPI.Filters;
 using Microsoft.AspNetCore.JsonPatch;
 
 public interface IRepository
@@ -16,4 +17,6 @@ public interface IRepository
     public void Update(int reference, JsonPatchDocument newData);
 
     public void Remove(int reference);
+
+    public List<IModel> Filter(IFilter filter);
 }

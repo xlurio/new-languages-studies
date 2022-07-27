@@ -3,6 +3,7 @@ namespace ToDoAPI.Adapters;
 using Microsoft.EntityFrameworkCore;
 using ToDoAPI.Models;
 using Microsoft.AspNetCore.JsonPatch;
+using ToDoAPI.Filters;
 
 public class TaskRepository : IRepository
 {
@@ -57,5 +58,43 @@ public class TaskRepository : IRepository
   {
     ToDoTask foundTask = (Get(reference) as ToDoTask)!;
     _context.Remove(foundTask);
+  }
+
+  public List<IModel> Filter(IFilter filter)
+  {
+    ToDoTaskFilter parsedFilter = (filter as ToDoTaskFilter)!;
+
+    IEnumerable<IModel> objectQuery =
+      from task in (_context as ToDoContext)!.ToDoTasks
+      where CheckFilterOnTask(parsedFilter, task)
+      select task;
+
+    return objectQuery.ToList();
+  }
+
+  private bool CheckFilterOnTask(ToDoTaskFilter filter, IModel objectToFilter)
+  {
+    DateTime taskDeadline = GetTaskDeadline(objectToFilter);
+
+    bool isAfterLowerBound =
+      IsDateAfter(taskDeadline, filter.FromDate);
+
+    bool isBeforeUpperBound =
+      IsDateAfter(filter.ToDate, taskDeadline);
+
+    return isAfterLowerBound && isBeforeUpperBound;
+  }
+
+  private DateTime GetTaskDeadline(IModel taskObject)
+  {
+    ToDoTask task = (taskObject as ToDoTask)!;
+
+    return task.Deadline.Value;
+  }
+
+  private bool IsDateAfter(DateTime dateToCheck, DateTime dateBefore)
+  {
+    int dayVariation = DateTime.Compare(dateBefore, dateToCheck);
+    return dayVariation < 0;
   }
 }
