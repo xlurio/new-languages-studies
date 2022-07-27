@@ -4,6 +4,7 @@ using ToDoAPI.Adapters;
 using ToDoAPI.Models;
 using ToDoAPI.Exceptions;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.JsonPatch;
 
 public class FakeRepository : IRepository
 {
@@ -30,7 +31,7 @@ public class FakeRepository : IRepository
 
     public IModel Get(int reference)
     {
-        IModel? objectFound = 
+        IModel? objectFound =
             _data.Find(
                 objectData => (objectData as ToDoTask)!.TaskId == reference
             );
@@ -43,5 +44,31 @@ public class FakeRepository : IRepository
         }
 
         return objectFound!;
+    }
+
+    public void Replace(int reference, IModel updatedObject)
+    {
+        IModel objectFound = Get(reference);
+        ToDoTask foundTask = (objectFound as ToDoTask)!;
+        ToDoTask updatedTask = (updatedObject as ToDoTask)!;
+
+        foundTask.Title = updatedTask.Title;
+        foundTask.Deadline = updatedTask.Deadline;
+    }
+
+    public void Update(int reference, JsonPatchDocument newData)
+    {
+        IModel objectFound = Get(reference);
+        ToDoTask foundTask = (objectFound as ToDoTask)!;
+
+        newData.ApplyTo(foundTask);
+    }
+
+    public void Remove(int reference)
+    {
+        IModel objectFound = Get(reference);
+        int indexToRemove = _data.IndexOf(objectFound);
+
+        _data.RemoveAt(indexToRemove);
     }
 }

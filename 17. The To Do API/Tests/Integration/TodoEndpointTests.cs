@@ -8,8 +8,9 @@ using ToDoAPI.Services;
 using ToDoAPI.Models;
 using ToDoAPI.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.JsonPatch;
 
-public struct PutRequestArrangements
+struct PutRequestArrangements
 {
   public int TaskId { get; }
   public ToDoTask NewTask { get; }
@@ -18,6 +19,20 @@ public struct PutRequestArrangements
   {
     TaskId = taskId;
     NewTask = newTask;
+  }
+}
+
+struct PatchRequestArrangements
+{
+  public int TaskId { get; }
+  public JsonPatchDocument NewData { get; }
+
+  public PatchRequestArrangements (
+    int taskId, JsonPatchDocument newData
+  )
+  {
+    TaskId = taskId;
+    NewData = newData;
   }
 }
 
@@ -31,12 +46,13 @@ public class TodoEndpointTests
   [SetUp]
   public void SetUp()
   {
-    DateTime task1Deadline = new DateTime(2022, 07, 22);
-    ToDoTask task1 = 
-      new ToDoTask("Talk to the college atendant", task1Deadline);
+    ToDoTask task1 =
+      new ToDoTask("Talk to the college atendant", "2022-07-22");
+    ToDoTask task2 =
+      new ToDoTask("Drink water", "2022-07-25");
 
     taskObjects = new List<IModel>{
-      task1
+      task1, task2
     };
 
     _unitOfWork = new FakeUnitOfWork(taskObjects);
@@ -71,10 +87,11 @@ public class TodoEndpointTests
   private void ThenShouldCreateTask(){
     List<IModel> result = _unitOfWork.ToDoTaskObjects.Get();
     int numberOfObjects = result.Count;
+    int expectedNumberOfObject = taskObjects.Count;
 
     ToDoTask objectCreated = (result.Last() as ToDoTask)!;
 
-    Assert.That(numberOfObjects, Is.EqualTo(2));
+    Assert.That(numberOfObjects, Is.EqualTo(expectedNumberOfObject));
     Assert.That(objectCreated.Title, Is.EqualTo("Register to college"));
     Assert.That((_unitOfWork as FakeUnitOfWork)!.Saved, Is.EqualTo(true));
   }
@@ -94,7 +111,7 @@ public class TodoEndpointTests
 
   private void ThenShouldRetrieveTasks(List<IModel> result)
   {
-    Assert.That(result.Count, Is.GreaterThan(0));
+    Assert.That(result.Count, Is.EqualTo(taskObjects.Count));
   }
 
   [Test]
@@ -121,7 +138,7 @@ public class TodoEndpointTests
 
   private void ThenShouldReturnCorrespondentTask(ToDoTask result, int taskId)
   {
-    ToDoTask expectedObject = 
+    ToDoTask expectedObject =
       (_unitOfWork.ToDoTaskObjects.Get(taskId) as ToDoTask)!;
 
     Assert.That(result.TaskId, Is.EqualTo(expectedObject.TaskId));
@@ -159,8 +176,70 @@ public class TodoEndpointTests
   private void ThenTheObjectIsReplaced(PutRequestArrangements arrangements)
   {
     int taskId = arrangements.TaskId;
-    ToDoTask replacedTask = 
+    ToDoTask replacedTask =
       (_unitOfWork.ToDoTaskObjects.Get(taskId) as ToDoTask)!;
+
+    Assert.That((_unitOfWork as FakeUnitOfWork)!.Saved, Is.EqualTo(true));
     Assert.That(replacedTask.Title, Is.EqualTo(arrangements.NewTask.Title));
+  }
+
+  [Test]
+  public void ModifyTask()
+  {
+    PatchRequestArrangements arrangements = GivenThePatchRequest();
+    WhenPatchRequested(arrangements);
+    ThenTheObjectIsModified(arrangements);
+  }
+
+  private PatchRequestArrangements GivenThePatchRequest()
+  {
+    ToDoTask taskToChange = (taskObjects[0] as ToDoTask)!;
+    JsonPatchDocument jsonObject = new JsonPatchDocument();
+
+    string title = "End To Do API";
+    jsonObject.Replace(nameof(taskToChange.Title), title);
+
+    int taskId = taskToChange.TaskId;
+
+    return new PatchRequestArrangements(
+      taskId, jsonObject
+    );
+  }
+
+  private void WhenPatchRequested(PatchRequestArrangements arrangements)
+  {
+    _controller.UpdateTask(arrangements.TaskId, arrangements.NewData);
+  }
+
+  private void ThenTheObjectIsModified(PatchRequestArrangements arrangements)
+  {
+    string expectedTitle = "End To Do API";
+    ToDoTask taskUpdated =
+      (_unitOfWork.ToDoTaskObjects.Get(arrangements.TaskId) as ToDoTask)!;
+
+    Assert.That(taskUpdated.Title, Is.EqualTo(expectedTitle));
+    Assert.That((_unitOfWork as FakeUnitOfWork).Saved, Is.EqualTo(true));
+  }
+
+  [Test]
+  public void RemoveTask()
+  {
+    int arrangements = GivenTheTaskId();
+    WhenDeleteRequested(arrangements);
+    ThenObjectIsDeleted();
+  }
+
+  private void WhenDeleteRequested(int taskId)
+  {
+    _controller.DeleteTask(taskId);
+  }
+
+  private void ThenObjectIsDeleted()
+  {
+    int expectedObjectsLeft = 1;
+    int result = _unitOfWork.ToDoTaskObjects.Get().Count;
+
+    Assert.That(result, Is.EqualTo(expectedObjectsLeft));
+    Assert.That((_unitOfWork as FakeUnitOfWork)!.Saved, Is.EqualTo(true));
   }
 }
