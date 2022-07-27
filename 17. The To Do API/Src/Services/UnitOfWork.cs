@@ -5,12 +5,12 @@ using ToDoAPI.Adapters;
 
 public class UnitOfWork : IUnitOfWork
 {
-    private DbContext _context;
+    private ToDoContext _context;
     public IRepository ToDoTaskObjects { get; }
 
-    public UnitOfWork ()
+    public UnitOfWork (ToDoContext context)
     {
-        _context = new ToDoContext();
+        _context = context;
         ToDoTaskObjects = new TaskRepository(_context);
     }
 

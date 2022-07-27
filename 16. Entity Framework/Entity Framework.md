@@ -125,8 +125,8 @@ To configure a connection string, you can set on appsettings.json as follow:
 Then, at `Program.cs` file in the project root and type the following between the `var builder = WebApplication.CreateBuilder(args);` and `var app = builder.Build();` lines:
 
 ```
-services.AddDbContext<BloggingContext>(options =>
-    options.UseSqlServer(Configuration.GetConnectionString("SampleDatabase")));
+build.Services.AddDbContext<BloggingContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SampleDatabase")));
 ```
 
 Resulting at:
@@ -149,7 +149,7 @@ public class Program
 
         // Configure database
         builder.Services.AddDbContext<BloggingContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("SampleDatabase")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("SampleDatabase")));
 
         var app = builder.Build();
 
