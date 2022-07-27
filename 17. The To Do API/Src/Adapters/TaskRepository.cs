@@ -65,9 +65,19 @@ public class TaskRepository : IRepository
   {
     ToDoTaskFilter parsedFilter = (filter as ToDoTaskFilter)!;
 
+    if (parsedFilter.FromDate == null && parsedFilter.ToDate == null)
+    {
+      return Get();
+    }
+
+    return FilterTasks(parsedFilter);
+  }
+
+  private List<IModel> FilterTasks(ToDoTaskFilter filter)
+  {
     List<IModel> objectsQuery =
       (from task in (_context as ToDoContext)!.ToDoTasks.AsEnumerable()
-      where CheckFilterOnTask(parsedFilter, task)
+      where CheckFilterOnTask(filter, task)
       select (task as IModel)!).ToList();
 
     if (objectsQuery.Count > 0)
@@ -103,6 +113,6 @@ public class TaskRepository : IRepository
   private bool IsDateAfter(DateTime? dateToCheck, DateTime? dateBefore)
   {
     int dayVariation = DateTime.Compare(dateBefore!.Value, dateToCheck!.Value);
-    return dayVariation < 0;
+    return dayVariation <= 0;
   }
 }

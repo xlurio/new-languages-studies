@@ -106,7 +106,9 @@ public class TodoEndpointTests
 
   private List<IModel>? WhenEndpointIsGetRequested()
   {
-    OkObjectResult response = (_controller.GetTasks() as OkObjectResult)!;
+    ToDoTaskFilter filter = new ToDoTaskFilter();
+
+    OkObjectResult response = (_controller.GetTasks(filter) as OkObjectResult)!;
     return (response!).Value as List<IModel>;
   }
 
@@ -262,7 +264,7 @@ public class TodoEndpointTests
   private List<IModel> WhenGetRequestedWithFilter(ToDoTaskFilter arrangements)
   {
     OkObjectResult? response =
-      _controller.GetTasksWithFilters(arrangements) as OkObjectResult;
+      _controller.GetTasks(arrangements) as OkObjectResult;
     List<IModel> results = (response!.Value as List<IModel>)!;
 
     return results;

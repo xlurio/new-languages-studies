@@ -28,8 +28,7 @@ public class ToDoController : ControllerBase
       return Ok(tasks);
 
     } catch (TaskNotFoundException) {
-      var tasks = _unitOfWork.ToDoTaskObjects.Get();
-      return Ok(tasks);
+      return BadRequest("Unexpected request");
 
     }
   }
@@ -48,7 +47,7 @@ public class ToDoController : ControllerBase
 
   [HttpPost]
   public ActionResult CreateTask(
-    [FromBody] ToDoTask task
+    ToDoTask task
   )
   {
     _unitOfWork.ToDoTaskObjects.Add(task);

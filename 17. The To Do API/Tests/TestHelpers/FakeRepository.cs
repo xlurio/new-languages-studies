@@ -77,6 +77,11 @@ public class FakeRepository : IRepository
     {
         ToDoTaskFilter parsedFilter = (filter as ToDoTaskFilter)!;
 
+        if (parsedFilter.FromDate == null && parsedFilter.ToDate == null)
+        {
+            return Get();
+        }
+
         List<IModel> objectsFound =
             _data.FindAll(
                 objectData => CheckFilterOnTask(parsedFilter, objectData)
@@ -94,7 +99,7 @@ public class FakeRepository : IRepository
 
     private bool CheckFilterOnTask(ToDoTaskFilter filter, IModel objectToFilter)
     {
-        DateTime taskDeadline = GetTaskDeadline(objectToFilter);
+        DateTime? taskDeadline = GetTaskDeadline(objectToFilter);
 
         bool isAfterLowerBound =
         IsDateAfter(taskDeadline, filter.FromDate);
@@ -105,15 +110,16 @@ public class FakeRepository : IRepository
         return isAfterLowerBound && isBeforeUpperBound;
     }
 
-    private DateTime GetTaskDeadline(IModel taskObject)
+    private DateTime? GetTaskDeadline(IModel taskObject)
     {
         ToDoTask task = (taskObject as ToDoTask)!;
-        return task.Deadline.Value;
+
+        return task.Deadline;
     }
 
-    private bool IsDateAfter(DateTime dateToCheck, DateTime dateBefore)
+    private bool IsDateAfter(DateTime? dateToCheck, DateTime? dateBefore)
     {
-        int dayVariation = DateTime.Compare(dateBefore, dateToCheck);
-        return dayVariation < 0;
+        int dayVariation = DateTime.Compare(dateBefore!.Value, dateToCheck!.Value);
+        return dayVariation <= 0;
     }
 }
