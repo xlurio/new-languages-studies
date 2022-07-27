@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ToDoAPI.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using ToDoAPI.Filters;
+using ToDoAPI.Exceptions;
 
 public class TaskRepository : IRepository
 {
@@ -64,17 +65,24 @@ public class TaskRepository : IRepository
   {
     ToDoTaskFilter parsedFilter = (filter as ToDoTaskFilter)!;
 
-    IEnumerable<IModel> objectQuery =
-      from task in (_context as ToDoContext)!.ToDoTasks
+    List<IModel> objectsQuery =
+      (from task in (_context as ToDoContext)!.ToDoTasks.AsEnumerable()
       where CheckFilterOnTask(parsedFilter, task)
-      select task;
+      select (task as IModel)!).ToList();
 
-    return objectQuery.ToList();
+    if (objectsQuery.Count > 0)
+    {
+      return objectsQuery;
+    }
+
+    throw new TaskNotFoundException(
+      "No task was found within parameters"
+    );
   }
 
   private bool CheckFilterOnTask(ToDoTaskFilter filter, IModel objectToFilter)
   {
-    DateTime taskDeadline = GetTaskDeadline(objectToFilter);
+    DateTime? taskDeadline = GetTaskDeadline(objectToFilter);
 
     bool isAfterLowerBound =
       IsDateAfter(taskDeadline, filter.FromDate);
@@ -85,16 +93,16 @@ public class TaskRepository : IRepository
     return isAfterLowerBound && isBeforeUpperBound;
   }
 
-  private DateTime GetTaskDeadline(IModel taskObject)
+  private DateTime? GetTaskDeadline(IModel taskObject)
   {
     ToDoTask task = (taskObject as ToDoTask)!;
 
-    return task.Deadline.Value;
+    return task.Deadline;
   }
 
-  private bool IsDateAfter(DateTime dateToCheck, DateTime dateBefore)
+  private bool IsDateAfter(DateTime? dateToCheck, DateTime? dateBefore)
   {
-    int dayVariation = DateTime.Compare(dateBefore, dateToCheck);
+    int dayVariation = DateTime.Compare(dateBefore!.Value, dateToCheck!.Value);
     return dayVariation < 0;
   }
 }

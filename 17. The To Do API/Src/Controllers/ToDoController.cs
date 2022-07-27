@@ -20,14 +20,7 @@ public class ToDoController : ControllerBase
   }
 
   [HttpGet(Name="GetTasks")]
-  public ActionResult GetTasks()
-  {
-    var tasks = _unitOfWork.ToDoTaskObjects.Get();
-    return Ok(tasks);
-  }
-
-  [HttpGet(Name="GetTasksWithFilters")]
-  public ActionResult GetTasksWithFilters([FromQuery] ToDoTaskFilter filter)
+  public ActionResult GetTasks([FromQuery] ToDoTaskFilter filter)
   {
     try
     {
@@ -35,7 +28,9 @@ public class ToDoController : ControllerBase
       return Ok(tasks);
 
     } catch (TaskNotFoundException) {
-      return BadRequest("No task was found within the parameters");
+      var tasks = _unitOfWork.ToDoTaskObjects.Get();
+      return Ok(tasks);
+
     }
   }
 

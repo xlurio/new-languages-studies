@@ -2,8 +2,8 @@ namespace ToDoAPI.Filters;
 
 public class ToDoTaskFilter : IFilter
 {
-  public DateTime FromDate { get; set; }
-  public DateTime ToDate { get; set; }
+  public DateTime? FromDate { get; set; }
+  public DateTime? ToDate { get; set; }
 
   public ToDoTaskFilter(string unformattedFromDate, string unformattedToDate)
   {
@@ -15,5 +15,9 @@ public class ToDoTaskFilter : IFilter
     ToDate = DateTime.ParseExact(
       unformattedToDate, datePattern, null
     );
+  }
+
+  public ToDoTaskFilter()
+  {
   }
 }
