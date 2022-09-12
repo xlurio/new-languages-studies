@@ -117,66 +117,45 @@ The table above shows the floating point data types:
     <thead>
         <th>Type</th>
         <th>Format Specifiers</th>
-        <th>Range Constants</th>
         <th>Range</th>
+        <th>Precision</th>
+        <th>Suffix for decimal constants</th>
     </thead>
     <tbody>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>float</td>
+            <td>
+                %f %F
+                %g %G
+                %e %E
+                %a %A
+            </td>
+            <td>±1.5 x 10^-45 to ±3.4 x 10^38</td>
+            <td>7 digits</td>
+            <td>f or F</td>
+        </tr>
+        <tr>
+            <td>double</td>
+            <td>
+                %lf %lF
+                %lg %lG
+                %le %lE
+                %la %lA
+            </td>
+            <td>±5 x 10^-324 to ±1.7 x 10^308</td>
+            <td>14 digits</td>
             <td></td>
         </tr>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-    </tbody>
-</table>
-
-
-## Decimal Types
-
-The table above shows the decimal data types:
-
-<table>
-    <thead>
-        <th>Type</th>
-        <th>Format Specifiers</th>
-        <th>Range Constants</th>
-        <th>Range</th>
-    </thead>
-    <tbody>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>long double</td>
+            <td>
+                %Lf %LF
+                %Lg %LG
+                %Le %LE
+                %La %LA
+            </td>
+            <td>±5 x 10^-324 to ±1.7 x 10^308</td>
+            <td>18 digits</td>
             <td></td>
         </tr>
     </tbody>
@@ -196,10 +175,22 @@ The table above shows the character data types:
     </thead>
     <tbody>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>char</td>
+            <td>%c</td>
+            <td>CHAR_MIN / CHAR_MAX</td>
+            <td>−127, +127</td>
+        </tr>
+        <tr>
+            <td>signed char</td>
+            <td>%c (or %hhi for numerical output)</td>
+            <td>SCHAR_MIN / SCHAR_MAX</td>
+            <td>−127, +127</td>
+        </tr>
+        <tr>
+            <td>unsigned char</td>
+            <td>%c (or %hhu for numerical output)</td>
+            <td>0 / UCHAR_MAX</td>
+            <td>0, 255</td>
         </tr>
     </tbody>
 </table>
