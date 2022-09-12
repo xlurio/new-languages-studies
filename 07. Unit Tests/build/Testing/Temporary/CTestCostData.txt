@@ -1,2 +1,0 @@
-TestSumNumbers.test_sum_numbers 3 0.00256157
----
