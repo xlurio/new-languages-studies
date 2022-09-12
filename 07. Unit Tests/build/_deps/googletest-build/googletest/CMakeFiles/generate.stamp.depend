@@ -1,0 +1,18 @@
+# CMake generation dependency list for this directory.
+C:/Users/lucas.correa/Projects/C/new-programming-languages-studies/07. Unit Tests/build/_deps/googletest-src/googletest/CMakeLists.txt
+C:/Users/lucas.correa/Projects/C/new-programming-languages-studies/07. Unit Tests/build/_deps/googletest-src/googletest/cmake/Config.cmake.in
+C:/Users/lucas.correa/Projects/C/new-programming-languages-studies/07. Unit Tests/build/_deps/googletest-src/googletest/cmake/gtest.pc.in
+C:/Users/lucas.correa/Projects/C/new-programming-languages-studies/07. Unit Tests/build/_deps/googletest-src/googletest/cmake/gtest_main.pc.in
+C:/Users/lucas.correa/Projects/C/new-programming-languages-studies/07. Unit Tests/build/_deps/googletest-src/googletest/cmake/internal_utils.cmake
+C:/Users/lucas.correa/cmake/share/cmake-3.23/Modules/BasicConfigVersion-AnyNewerVersion.cmake.in
+C:/Users/lucas.correa/cmake/share/cmake-3.23/Modules/CMakePackageConfigHelpers.cmake
+C:/Users/lucas.correa/cmake/share/cmake-3.23/Modules/CheckCSourceCompiles.cmake
+C:/Users/lucas.correa/cmake/share/cmake-3.23/Modules/CheckIncludeFile.cmake
+C:/Users/lucas.correa/cmake/share/cmake-3.23/Modules/CheckLibraryExists.cmake
+C:/Users/lucas.correa/cmake/share/cmake-3.23/Modules/FindPackageHandleStandardArgs.cmake
+C:/Users/lucas.correa/cmake/share/cmake-3.23/Modules/FindPackageMessage.cmake
+C:/Users/lucas.correa/cmake/share/cmake-3.23/Modules/FindPython.cmake
+C:/Users/lucas.correa/cmake/share/cmake-3.23/Modules/FindPython/Support.cmake
+C:/Users/lucas.correa/cmake/share/cmake-3.23/Modules/FindThreads.cmake
+C:/Users/lucas.correa/cmake/share/cmake-3.23/Modules/Internal/CheckSourceCompiles.cmake
+C:/Users/lucas.correa/cmake/share/cmake-3.23/Modules/WriteBasicConfigVersionFile.cmake

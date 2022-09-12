@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "basic_output.h": "c"
+        "basic_output.h": "c",
+        "program_to_test.h": "c"
     }
 }

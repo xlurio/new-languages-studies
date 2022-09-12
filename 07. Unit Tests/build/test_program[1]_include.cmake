@@ -1,0 +1,5 @@
+if(EXISTS "C:/Users/lucas.correa/Projects/C/new-programming-languages-studies/07. Unit Tests/build/test_program[1]_tests.cmake")
+  include("C:/Users/lucas.correa/Projects/C/new-programming-languages-studies/07. Unit Tests/build/test_program[1]_tests.cmake")
+else()
+  add_test(test_program_NOT_BUILT test_program_NOT_BUILT)
+endif()

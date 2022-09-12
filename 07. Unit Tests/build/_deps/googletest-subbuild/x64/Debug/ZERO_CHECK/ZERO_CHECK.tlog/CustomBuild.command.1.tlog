@@ -1,0 +1,10 @@
+^C:\USERS\LUCAS.CORREA\PROJECTS\C\NEW-PROGRAMMING-LANGUAGES-STUDIES\07. UNIT TESTS\BUILD\_DEPS\GOOGLETEST-SUBBUILD\CMAKEFILES\A778330D6E76104DC9A9306E447ADFC5\GENERATE.STAMP.RULE
+setlocal
+C:\Users\lucas.correa\cmake\bin\cmake.exe "-SC:/Users/lucas.correa/Projects/C/new-programming-languages-studies/07. Unit Tests/build/_deps/googletest-subbuild" "-BC:/Users/lucas.correa/Projects/C/new-programming-languages-studies/07. Unit Tests/build/_deps/googletest-subbuild" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "C:/Users/lucas.correa/Projects/C/new-programming-languages-studies/07. Unit Tests/build/_deps/googletest-subbuild/googletest-populate.sln"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
