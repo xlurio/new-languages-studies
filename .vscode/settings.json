@@ -1,6 +1,11 @@
 {
     "files.associations": {
         "basic_output.h": "c",
-        "program_to_test.h": "c"
+        "program_to_test.h": "c",
+        "list": "cpp",
+        "variant": "cpp",
+        "algorithm": "cpp",
+        "xutility": "cpp",
+        "vector": "cpp"
     }
 }
