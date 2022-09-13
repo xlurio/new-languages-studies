@@ -3,9 +3,9 @@
 int main()
 {
     int array_to_sort[] = {4, 2, 5, 1, 3};
-    int array_length = sizeof(array_to_sort);
+    int array_length = sizeof(array_to_sort) / sizeof(array_to_sort[0]);
 
-    merge_sort(array_to_sort, 0, array_length + 1);
+    merge_sort(array_to_sort, 0, array_length - 1);
 
     for (int index = 0; index < array_length; index++)
     {
