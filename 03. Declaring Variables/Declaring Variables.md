@@ -1,0 +1,5 @@
+# Declaring Variables
+
+```
+$foo = "bar";
+```
