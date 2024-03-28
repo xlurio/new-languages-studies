@@ -2,7 +2,8 @@
 
 When a form is submitted to a PHP script, the information from that form is automatically made available to the script. There are few ways to access this information, for example:
 
-``` Example #1 A simple HTML form
+- Example #1 A simple HTML form:
+```php
 <form action="foo.php" method="post">
     Name:  <input type="text" name="username" /><br />
     Email: <input type="text" name="email" /><br />
@@ -10,7 +11,8 @@ When a form is submitted to a PHP script, the information from that form is auto
 </form>
 ```
 
-``` foo.php
+- foo.php:
+```php
 <?php
 echo $_POST['username'];
 echo $_REQUEST['username'];

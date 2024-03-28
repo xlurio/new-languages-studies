@@ -2,7 +2,7 @@
 
 ## How to create
 
-```
+```php
 <!DOCTYPE html>
 <html>
     <head></head>
@@ -33,7 +33,7 @@ EOD;
 
 ## How to concatenate
 
-```
+```php
 <!DOCTYPE html>
 <html>
     <head></head>
@@ -48,7 +48,7 @@ EOD;
 
 ## How to interpolate
 
-```
+```php
 <!DOCTYPE html>
 <html>
     <head></head>

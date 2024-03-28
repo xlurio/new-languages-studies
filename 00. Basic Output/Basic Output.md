@@ -1,6 +1,6 @@
 Basic output in PHP is by done by the `echo` language construct as following:
 
-```
+```php
 <!DOCTYPE html>
 <!DOCTYPE html>
 <html>
@@ -15,7 +15,7 @@ Basic output in PHP is by done by the `echo` language construct as following:
 
 `echo` also has a shortcut syntax, where you can immediately follow the opening tag with an equals sign. This syntax is available even with the short_open_tag configuration setting disabled. 
 
-```
+```php
 <!DOCTYPE html>
 <!DOCTYPE html>
 <html>
@@ -31,7 +31,7 @@ Basic output in PHP is by done by the `echo` language construct as following:
 
 It is also possible to concatenate strings when outputting like the following:
 
-```
+```php
 <!DOCTYPE html>
 <!DOCTYPE html>
 <html>
